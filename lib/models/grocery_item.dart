@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:grocery_list/models/category.dart';
 
 class GroceryItem {

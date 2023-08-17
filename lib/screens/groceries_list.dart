@@ -11,8 +11,9 @@ class GroceriesListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Your groceries'),
       ),
-      body: ListView(
-        children: [...groceryItems.map((item) => ListItem(item))],
+      body: ListView.builder(
+        itemCount: groceryItems.length,
+        itemBuilder: (ctx, i) => ListItem(groceryItems[i]),
       ),
     );
   }

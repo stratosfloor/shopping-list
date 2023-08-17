@@ -8,21 +8,10 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.square, color: item.category.color),
-              const SizedBox(width: 15),
-              Text(item.name),
-            ],
-          ),
-          Text(item.quantity.toString()),
-        ],
-      ),
+    return ListTile(
+      title: Text(item.name),
+      leading: Icon(Icons.square, color: item.category.color),
+      trailing: Text(item.quantity.toString()),
     );
   }
 }
