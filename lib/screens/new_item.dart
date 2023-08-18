@@ -23,13 +23,13 @@ class _NewItemState extends State<NewItemScreen> {
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
 
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       final url = Uri.https(dotenv.env['FIREBASE_URI']!, 'shopping-list.json');
 
-      http.post(
+      final response = await http.post(
         url,
         headers: {
           'Content-type': 'application/json',
@@ -43,6 +43,9 @@ class _NewItemState extends State<NewItemScreen> {
         ),
       );
 
+      if (!context.mounted) {
+        return;
+      }
       Navigator.of(context).pop();
     }
   }
