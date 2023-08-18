@@ -39,10 +39,21 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
           )
         ],
       ),
-      body: ListView.builder(
-        itemCount: _groceryItems.length,
-        itemBuilder: (ctx, i) => ListItem(_groceryItems[i]),
-      ),
+      body: _groceryItems.isEmpty
+          ? const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'No items in list',
+                    style: TextStyle(fontSize: 28),
+                  ),
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: _groceryItems.length,
+              itemBuilder: (ctx, i) => ListItem(_groceryItems[i])),
     );
   }
 }
