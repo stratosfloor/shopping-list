@@ -8,10 +8,18 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(item.name),
-      leading: Icon(Icons.square, color: item.category.color),
-      trailing: Text(item.quantity.toString()),
+    return Column(
+      children: [
+        ListTile(
+          title: Text(item.name),
+          leading: Icon(Icons.square, color: item.category.color),
+          trailing: Text(
+            item.quantity.toString(),
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        const Divider(height: 0),
+      ],
     );
   }
 }
