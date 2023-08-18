@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:grocery_list/data/categories.dart';
-import 'package:grocery_list/widgets/CenterText.dart';
+import 'package:grocery_list/widgets/center_text.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:grocery_list/models/grocery_item.dart';
