@@ -20,6 +20,7 @@ class GroceriesListScreen extends StatefulWidget {
 class _GroceriesListScreenState extends State<GroceriesListScreen> {
   List<GroceryItem> _groceryItems = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -30,8 +31,14 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
   void _loadItems() async {
     final url = Uri.https(dotenv.env['FIREBASE_URI']!, 'shopping-list.json');
     final response = await http.get(url);
-    final Map<String, dynamic> listData = json.decode(response.body);
 
+    if (response.statusCode >= 400) {
+      setState(() {
+        _error = 'Failed to fetch data.';
+      });
+    }
+
+    final Map<String, dynamic> listData = json.decode(response.body);
     final List<GroceryItem> loadedItems = [];
     for (final item in listData.entries) {
       loadedItems.add(
@@ -90,6 +97,10 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
                   },
                 ),
               );
+
+    if (_error != null) {
+      content = CenterText(text: _error!, fontSize: 26);
+    }
 
     return Scaffold(
         appBar: AppBar(
