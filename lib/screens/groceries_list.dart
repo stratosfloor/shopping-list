@@ -77,7 +77,7 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
   @override
   Widget build(BuildContext context) {
     Widget content = _isLoading
-        ? const CenterText(text: 'Loading...', fontSize: 22)
+        ? const Center(child: CircularProgressIndicator())
         : _groceryItems.isEmpty
             ? const CenterText(text: 'No items in list', fontSize: 26)
             : ListView.builder(
