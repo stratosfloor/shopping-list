@@ -75,10 +75,55 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
     });
   }
 
-  void _removeItem(GroceryItem item) {
+  void _removeItem(GroceryItem item) async {
+    final index = _groceryItems.indexOf(item);
     setState(() {
       _groceryItems.remove(item);
     });
+
+    final url =
+        Uri.https(dotenv.env['FIREBASE_URI']!, 'shopping-list/${item.id}.json');
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      // ignore: use_build_context_synchronously
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wront...'),
+        ),
+      );
+
+      setState(() {
+        _groceryItems.insert(index, item);
+      });
+    }
+
+    // ignore: use_build_context_synchronously
+    if (!context.mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text('Item deleted'),
+        action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              setState(() {
+                _groceryItems.insert(
+                  index,
+                  item,
+                );
+              });
+            }),
+      ),
+    );
   }
 
   @override
