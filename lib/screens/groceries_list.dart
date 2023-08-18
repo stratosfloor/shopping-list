@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:grocery_list/data/categories.dart';
+import 'package:grocery_list/widgets/CenterText.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:grocery_list/models/grocery_item.dart';
@@ -18,6 +19,7 @@ class GroceriesListScreen extends StatefulWidget {
 
 class _GroceriesListScreenState extends State<GroceriesListScreen> {
   List<GroceryItem> _groceryItems = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -46,17 +48,24 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
 
     setState(() {
       _groceryItems = loadedItems;
+      _isLoading = false;
     });
   }
 
-  void _addImem() async {
-    await Navigator.of(context).push<GroceryItem>(
+  void _addItem() async {
+    final newItem = await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(
         builder: (ctx) => const NewItemScreen(),
       ),
     );
 
-    _loadItems();
+    if (newItem == null) {
+      return;
+    }
+
+    setState(() {
+      _groceryItems.add(newItem);
+    });
   }
 
   void _removeItem(GroceryItem item) {
@@ -67,35 +76,27 @@ class _GroceriesListScreenState extends State<GroceriesListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = _groceryItems.isEmpty
-        ? const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'No items in list',
-                  style: TextStyle(fontSize: 28),
+    Widget content = _isLoading
+        ? const CenterText(text: 'Loading...', fontSize: 22)
+        : _groceryItems.isEmpty
+            ? const CenterText(text: 'No items in list', fontSize: 26)
+            : ListView.builder(
+                itemCount: _groceryItems.length,
+                itemBuilder: (ctx, i) => Dismissible(
+                  key: ValueKey(_groceryItems[i]),
+                  child: ListItem(_groceryItems[i]),
+                  onDismissed: (direction) {
+                    _removeItem(_groceryItems[i]);
+                  },
                 ),
-              ],
-            ),
-          )
-        : ListView.builder(
-            itemCount: _groceryItems.length,
-            itemBuilder: (ctx, i) => Dismissible(
-              key: ValueKey(_groceryItems[i]),
-              child: ListItem(_groceryItems[i]),
-              onDismissed: (direction) {
-                _removeItem(_groceryItems[i]);
-              },
-            ),
-          );
+              );
 
     return Scaffold(
         appBar: AppBar(
           title: const Text('Your groceries'),
           actions: [
             IconButton(
-              onPressed: _addImem,
+              onPressed: _addItem,
               icon: const Icon(Icons.add),
             )
           ],
