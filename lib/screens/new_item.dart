@@ -22,13 +22,16 @@ class _NewItemState extends State<NewItemScreen> {
   var _enteredName = '';
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
+  var _isPosting = false;
 
   void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      setState(() {
+        _isPosting = true;
+      });
 
       final url = Uri.https(dotenv.env['FIREBASE_URI']!, 'shopping-list.json');
-
       final response = await http.post(
         url,
         headers: {
@@ -145,13 +148,21 @@ class _NewItemState extends State<NewItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {
-                        _formKey.currentState!.reset();
-                      },
+                      onPressed: !_isPosting
+                          ? () {
+                              _formKey.currentState!.reset();
+                            }
+                          : null,
                       child: const Text('Reset')),
                   ElevatedButton(
-                    onPressed: _saveItem,
-                    child: const Text('Add item'),
+                    onPressed: !_isPosting ? _saveItem : null,
+                    child: !_isPosting
+                        ? const Text('Add item')
+                        : const SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(),
+                          ),
                   ),
                 ],
               ),
